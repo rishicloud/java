@@ -1,29 +1,33 @@
 pipeline {
-    agent any
-    triggers{
-        // Triggers pipeline for every commit on git repo
-        pollSCM '* * * * *'
+    agent { label 'rishi12' }
+    triggers { 
+        cron('45 23 * * 1-5')
+        pollSCM('*/5 * * * *')
     }
-   
-    stages {
-        stage('Stage 1'){
-        agent {label 'rishi12'}
-        steps {
-            // Get some code from a GitHub repository
-            git branch: 'main', url: 'https://github.com/rishicloud/node.git'
-            // Run Maven on a Unix agent.
-            sh "/usr/local/apache-maven-3.8.6/mvn clean"
 
+
+    stages {
+        stage('scm') {
+            steps {
+
+                git url: 'https://github.com/rishicloud/java.git', branch: 'main'
             }
         }
-
-    }
-        post{
-                // If Maven was able to run the tests, even if some of the test
-                // failed, record the test results and archive the jar file.
-                success {
-                    junit '**/target/surefire-reports/TEST-*.xml'
-                    archiveArtifacts 'target/*.jar'
+        stage('build') {
+            steps {
+                withSonarQubeEnv(installationName: 'SONAR_9.4') {
+                    sh "mvn clean package sonar:sonar"                                  
                 }
             }
+        }
+		stage("Quality Gate") {
+            steps {
+                timeout(time: 1, unit: 'HOURS') {
+                    // Parameter indicates whether to set pipeline to UNSTABLE if Quality Gate fails
+                    // true = set pipeline to UNSTABLE, false = don't
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
+    }
 }
