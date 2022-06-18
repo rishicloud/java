@@ -1,29 +1,25 @@
 pipeline {
- agent{ label 'rishi12' }
-//  triggers {
-//         cron('0 * * * *')
-//     }
- stages{
-    stage('Source Code') {
-       steps{
-           git url: 'https://github.com/rishicloud/java.git',
-           branch: 'main'
+    agent none
+    stages { 
+        stage('SCM Checkout') {
+            agent { label 'master' }
+            steps{
+            git url: 'https://github.com/rishicloud/java.git', branch: "main"
+            }
+        }
+
+        stage('Build package') {
+            agent { label 'rishi12' }
+            steps{
+                sh 'sudo mvn clean package'
+            }
+        }
+
+        stage('Build docker image') {
+            agent { label 'rishi12' }
+            steps {  
+                sh 'sudo docker build -t samplespc:$BUILD_NUMBER .'
+            }
         }
     }
-    stage('Build the code ans SonarQube Analysis'){
-        steps{ 
-              sh script: "mvn clean package"
-        }
-    }
-    stage('Junit Test'){
-        steps{
-            junit '**/surefire-reports/*.xml'
-        }
-    }
-    stage('Archive artifact'){
-        steps{
-           archiveArtifacts artifacts: '**/*.jar', followSymlinks: false
-        }
-    }
-  }
 }
