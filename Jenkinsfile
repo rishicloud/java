@@ -2,7 +2,7 @@ pipeline {
     agent none
     stages { 
         stage('SCM Checkout') {
-            agent { label 'master' }
+            agent { label 'rishi12' }
             steps{
             git url: 'https://github.com/rishicloud/java.git', branch: "main"
             }
