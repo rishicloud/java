@@ -11,9 +11,8 @@ pipeline {
         stage('Build package') {
             agent { label 'rishi12' }
             steps{
-              
-                echo $M2_HOME
-            }
+                sh 'mvn clean package'
+                }
         }
 
         stage('Build docker image') {
