@@ -12,6 +12,7 @@ pipeline {
             agent { label 'rishi12' }
             steps{
                 sh 'mvn clean package'
+                echo $M2_HOME
             }
         }
 
