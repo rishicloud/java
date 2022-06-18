@@ -11,7 +11,7 @@ pipeline {
         stage('Build package') {
             agent { label 'rishi12' }
             steps{
-                sh 'sudo mvn clean package'
+                sh "mvn clean package"
             }
         }
 
