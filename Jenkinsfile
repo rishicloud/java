@@ -12,7 +12,7 @@ pipeline {
             // Get some code from a GitHub repository
             git branch: 'main', url: 'https://github.com/rishicloud/node.git'
             // Run Maven on a Unix agent.
-            sh "/usr/local/apache-maven-3.8.6/mvn clean package"
+            sh "/usr/local/apache-maven-3.8.6/maven clean package"
 
             }
         }
