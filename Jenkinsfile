@@ -17,7 +17,7 @@ pipeline {
         stage('build') {
             steps {
                 withSonarQubeEnv(installationName: 'SONAR_9.3') {
-                    sh "mvn clean package sonar:sonar"                                  
+                    sh "mvn clean sonar:sonar"                                  
                 }
             }
         }
